@@ -69,7 +69,6 @@ form .inputField>div label::after {
     font-size: 18px;
 }
 
-/* Модальное окно подтверждения увольнения */
 #confirmFireModalForm .modal-header.bg-warning {
     background: #ffc107 !important;
     color: #000;
@@ -90,6 +89,48 @@ form .inputField>div label::after {
 #confirmFireModalForm .modal-footer .btn-warning:hover {
     background-color: #e0a800;
     border-color: #d39e00;
+}
+
+form.d-flex {
+    gap: 10px;
+}
+
+form.d-flex .form-control-lg {
+    font-size: 18px;
+    padding: 12px 20px;
+    border: 2px solid #e0e0e0;
+    transition: border-color 0.3s;
+}
+
+form.d-flex .form-control-lg:focus {
+    border-color: #0d6efd;
+    box-shadow: none;
+}
+
+form.d-flex .btn-lg {
+    padding: 12px 30px;
+    font-size: 18px;
+}
+
+.bi-search {
+    margin-right: 5px;
+}
+
+.alert-info {
+    background-color: #e1f5fe;
+    border: none;
+    color: #01579b;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+td[colspan="12"] {
+    background-color: #f8f9fa;
+}
+
+td[colspan="12"] i.bi-exclamation-circle {
+    font-size: 48px;
+    color: #adb5bd;
 }
 
 @media (max-width: 768px) {

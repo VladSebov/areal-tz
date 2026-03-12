@@ -8,32 +8,45 @@ $edit_id = isset($_GET['edit_id']) ? (int) $_GET['edit_id'] : null;
 $confirm_fire_id = isset($_GET['confirm_fire_id']) ? (int) $_GET['confirm_fire_id'] : null;
 $fire_id = isset($_GET['fire_id']) ? (int) $_GET['fire_id'] : null;
 
+//Увольнение
 if ($fire_id) {
     mysqli_query($conn, "UPDATE employees SET fired = 1 WHERE id = $fire_id");
     header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
     exit;
 }
 
-$all_employees = mysqli_query($conn, "Select * from employees");
-
+//Просмотр
 $view_employee = null;
 if ($view_id) {
     $view_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $view_id");
     $view_employee = mysqli_fetch_assoc($view_result);
 }
 
+//Редактирование
 $edit_employee = null;
 if ($edit_id) {
     $edit_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $edit_id");
     $edit_employee = mysqli_fetch_assoc($edit_result);
 }
 
-
+//Подтверждение увольнения
 $confirm_fire_employee = null;
 if ($confirm_fire_id) {
     $fire_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $confirm_fire_id");
     $confirm_fire_employee = mysqli_fetch_assoc($fire_result);
 }
+
+//Поиск
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+$sql = "SELECT * FROM employees";
+if (!empty($search)) {
+    $search_escaped = mysqli_real_escape_string($conn, $search);
+    $sql .= " WHERE full_name LIKE '$search_escaped%' OR full_name LIKE '% $search_escaped%'";
+}
+$sql .= " ORDER BY id DESC";
+
+$all_employees = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +80,42 @@ if ($confirm_fire_id) {
         <section class="p-3">
             <div class="row">
                 <div class="col-12">
+
+                    <!-- Поисковая строка -->
+                    <div class="row mb-4">
+                        <div class="col-md-8 mx-auto">
+                            <form method="GET" action="" class="d-flex">
+                                <input type="text" name="search" class="form-control form-control-lg me-2"
+                                    placeholder="Поиск сотрудника по ФИО..." value="<?= htmlspecialchars($search) ?>">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-search"></i> Найти
+                                </button>
+                                <?php if (!empty($search)): ?>
+                                    <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn btn-secondary btn-lg
+                                    ms-2">
+                                        <i class="bi bi-x-circle"></i> Сбросить
+                                    </a>
+                                <?php endif; ?>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Результат поиска -->
+                    <?php if (!empty($search)): ?>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    Результаты поиска для: <strong>
+                                        <?= htmlspecialchars($search) ?>
+                                    </strong>
+                                    (найдено:
+                                    <?= mysqli_num_rows($all_employees) ?>)
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Employees Table -->
                     <table class="table table-striped table-hover mt-3 text-center table-bordered">
                         <tr>
                             <th>№</th>
@@ -83,43 +132,64 @@ if ($confirm_fire_id) {
                             <th>Действия</th>
                         </tr>
 
-                        <?php
-                        while ($employee = mysqli_fetch_assoc($all_employees)): ?>
+                        <?php if (mysqli_num_rows($all_employees) > 0): ?>
+                            <?php while ($employee = mysqli_fetch_assoc($all_employees)): ?>
 
+                                <tr>
+                                    <td><?= $employee["id"] ?></td>
+                                    <td><?= $employee["full_name"] ?></td>
+                                    <td><?= $employee["birth_date"] ?></td>
+                                    <td><?= $employee["passport"] ?></td>
+                                    <td><?= $employee["phone_number"] ?></td>
+                                    <td><?= $employee["email"] ?></td>
+                                    <td><?= $employee["address"] ?></td>
+                                    <td><?= $employee["department"] ?></td>
+                                    <td><?= $employee["position"] ?></td>
+                                    <td><?= $employee["salary"] ?></td>
+                                    <td><?= $employee["hire_date"] ?></td>
+                                    <td>
+                                        <?php if ($employee["fired"] == 1): ?>
+                                            <button class="btn btn-secondary" disabled>
+                                                <i class="bi bi-person-x"></i> Уволен
+                                            </button>
+                                        <?php else: ?>
+                                            <a href="?view_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                                class="btn btn-success view-btn">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            <!-- Аналогично для других кнопок -->
+                                            <a href="?edit_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                                class="btn btn-primary edit-btn">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            <a href="?confirm_fire_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                                class="btn btn-warning fire-btn">
+                                                <i class="bi bi-person-x"></i> Уволить
+                                            </a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+
+                            <?php endwhile; ?>
+                        <?php else: ?>
                             <tr>
-                                <td><?= $employee["id"] ?></td>
-                                <td><?= $employee["full_name"] ?></td>
-                                <td><?= $employee["birth_date"] ?></td>
-                                <td><?= $employee["passport"] ?></td>
-                                <td><?= $employee["phone_number"] ?></td>
-                                <td><?= $employee["email"] ?></td>
-                                <td><?= $employee["address"] ?></td>
-                                <td><?= $employee["department"] ?></td>
-                                <td><?= $employee["position"] ?></td>
-                                <td><?= $employee["salary"] ?></td>
-                                <td><?= $employee["hire_date"] ?></td>
-                                <td>
-                                    <?php if ($employee["fired"] == 1): ?>
-                                        <button class="btn btn-secondary" disabled>
-                                            <i class="bi bi-person-x"></i> Уволен
-                                        </button>
-                                    <?php else: ?>
-                                        <a href="?view_id=<?= $employee['id'] ?>" class="btn btn-success view-btn">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="?edit_id=<?= $employee['id'] ?>" class="btn btn-primary edit-btn">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <!-- Кнопка увольнения открывает модальное окно -->
-                                        <a href="?confirm_fire_id=<?= $employee['id'] ?>" class="btn btn-warning fire-btn">
-                                            <i class="bi bi-person-x"></i> Уволить
+                                <td colspan="12" class="text-center py-4">
+                                    <i class="bi bi-exclamation-circle fs-1 d-block mb-3 text-muted"></i>
+                                    <h5>Сотрудники не найдены</h5>
+                                    <?php if (!empty($search)): ?>
+                                        <p>По запросу "<?= htmlspecialchars($search) ?>" ничего не найдено</p>
+                                        <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>"
+                                            class="btn btn-outline-primary mt-2">
+                                            <i class="bi bi-arrow-left"></i> Вернуться ко всем сотрудникам
                                         </a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
-
-                        <?php endwhile; ?>
+                        <?php endif; ?>
                     </table>
+
                 </div>
             </div>
             <div class="row">
@@ -390,6 +460,12 @@ if ($confirm_fire_id) {
                 var fireModal = new bootstrap.Modal(document.getElementById('confirmFireModalForm'));
                 fireModal.show();
             <?php endif; ?>
+
+            document.querySelector('input[name="search"]')?.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.form.submit();
+                }
+            });
         });
     </script>
     <!-- jQuery и плагин маски -->
