@@ -1,0 +1,214 @@
+table tr td {
+    vertical-align: middle;
+}
+
+td button,
+td a {
+    margin: 5px;
+}
+
+td button i,
+td a i {
+    font-size: 20px;
+}
+
+header h1 {
+    padding-top: 50px;
+}
+
+.modal-header {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.inputField {
+    width: 100%;
+}
+
+.inputField>div {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.inputField>div label {
+    flex: 0 0 200px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+form .inputField>div label::after {
+    content: "*";
+    color: red;
+    margin-left: 4px;
+}
+
+.inputField>div input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid lightblue;
+    background: transparent;
+    font-size: 16px;
+}
+
+#viewModalForm .inputField>div input {
+    color: #000;
+    font-size: 18px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.modal-footer .submit {
+    font-size: 18px;
+}
+
+#confirmFireModalForm .modal-header.bg-warning {
+    background: #ffc107 !important;
+    color: #000;
+}
+
+#confirmFireModalForm .modal-body p.fs-4 {
+    color: #dc3545;
+    margin: 20px 0;
+}
+
+#confirmFireModalForm .modal-footer .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    font-weight: 500;
+}
+
+#confirmFireModalForm .modal-footer .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+form.d-flex {
+    gap: 10px;
+}
+
+form.d-flex .form-control-lg {
+    font-size: 18px;
+    padding: 12px 20px;
+    border: 2px solid #e0e0e0;
+    transition: border-color 0.3s;
+}
+
+form.d-flex .form-control-lg:focus {
+    border-color: #0d6efd;
+    box-shadow: none;
+}
+
+form.d-flex .btn-lg {
+    padding: 12px 30px;
+    font-size: 18px;
+}
+
+.bi-search {
+    margin-right: 5px;
+}
+
+.alert-info {
+    background-color: #e1f5fe;
+    border: none;
+    color: #01579b;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+td[colspan="12"] {
+    background-color: #f8f9fa;
+}
+
+td[colspan="12"] i.bi-exclamation-circle {
+    font-size: 48px;
+    color: #adb5bd;
+}
+
+/* Стили для фильтров */
+.card {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 15px 20px;
+}
+
+.card-header h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: none;
+}
+
+.badge {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-right: 5px;
+    border-radius: 6px;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #e0e0e0;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #c0c0c0;
+}
+
+@media (max-width: 768px) {
+    .inputField>div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .inputField>div label {
+        flex: none;
+        width: 100%;
+    }
+
+    .inputField>div input {
+        width: 100%;
+        flex: none;
+    }
+
+    .col-md-2 .d-grid {
+        margin-top: 10px;
+    }
+}

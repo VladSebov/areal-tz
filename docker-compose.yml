@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PORT=${MYSQL_PORT}
+    volumes:
+    - ./src:/var/www/html
+    ports:
+    - "${APP_PORT}:${APP_PORT}"
+
+  mysql:
+    image: mysql
+    restart: always
+    volumes:
+      - ./database/data:/var/lib/mysql
+      - ./database/scripts:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: arealtz_database
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
