@@ -1,0 +1,16 @@
+table tr td {
+    vertical-align: middle;
+}
+
+td button {
+    margin: 5;
+}
+
+td button i {
+    font-family: 20px;
+}
+
+header h1 {
+    padding-top: 50px;
+}
+
