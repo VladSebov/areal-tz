@@ -1,11 +1,20 @@
 <?php
 
 include "config.php";
-$all_employees = mysqli_query($conn, "Select * from employees");
 
 // Обработка параметров из URL
 $view_id = isset($_GET['view_id']) ? (int) $_GET['view_id'] : null;
 $edit_id = isset($_GET['edit_id']) ? (int) $_GET['edit_id'] : null;
+$confirm_fire_id = isset($_GET['confirm_fire_id']) ? (int) $_GET['confirm_fire_id'] : null;
+$fire_id = isset($_GET['fire_id']) ? (int) $_GET['fire_id'] : null;
+
+if ($fire_id) {
+    mysqli_query($conn, "UPDATE employees SET fired = 1 WHERE id = $fire_id");
+    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+    exit;
+}
+
+$all_employees = mysqli_query($conn, "Select * from employees");
 
 $view_employee = null;
 if ($view_id) {
@@ -19,6 +28,12 @@ if ($edit_id) {
     $edit_employee = mysqli_fetch_assoc($edit_result);
 }
 
+
+$confirm_fire_employee = null;
+if ($confirm_fire_id) {
+    $fire_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $confirm_fire_id");
+    $confirm_fire_employee = mysqli_fetch_assoc($fire_result);
+}
 ?>
 
 <!DOCTYPE html>
@@ -84,13 +99,22 @@ if ($edit_id) {
                                 <td><?= $employee["salary"] ?></td>
                                 <td><?= $employee["hire_date"] ?></td>
                                 <td>
-                                    <a href="?view_id=<?= $employee['id'] ?>" class="btn btn-success view-btn">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="?edit_id=<?= $employee['id'] ?>" class="btn btn-primary edit-btn">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                    <?php if ($employee["fired"] == 1): ?>
+                                        <button class="btn btn-secondary" disabled>
+                                            <i class="bi bi-person-x"></i> Уволен
+                                        </button>
+                                    <?php else: ?>
+                                        <a href="?view_id=<?= $employee['id'] ?>" class="btn btn-success view-btn">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="?edit_id=<?= $employee['id'] ?>" class="btn btn-primary edit-btn">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <!-- Кнопка увольнения открывает модальное окно -->
+                                        <a href="?confirm_fire_id=<?= $employee['id'] ?>" class="btn btn-warning fire-btn">
+                                            <i class="bi bi-person-x"></i> Уволить
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
 
@@ -317,6 +341,31 @@ if ($edit_id) {
         </div>
         <!-- Edit Modal Form -->
 
+        <!-- Confirm Fire Modal Form -->
+        <div class="modal fade <?= $confirm_fire_id ? 'show' : '' ?>" id="confirmFireModalForm" <?= $confirm_fire_id ? 'style="display:block"' : '' ?>>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h4 class="modal-title">Подтверждение увольнения</h4>
+                        <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn-close"
+                            aria-label="Закрыть"></a>
+                    </div>
+                    <div class="modal-body">
+                        <p class="fs-5">Вы действительно хотите уволить сотрудника:</p>
+                        <p class="fw-bold text-center fs-4">
+                            <?= htmlspecialchars($confirm_fire_employee['full_name'] ?? '') ?>
+                        </p>
+                        <p class="text-muted text-center">Действие нельзя отменить</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn btn-secondary">Отмена</a>
+                        <a href="?fire_id=<?= $confirm_fire_id ?>" class="btn btn-warning">Подтвердить увольнение</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Confirm Fire Modal Form -->
+
     </main>
 
 
@@ -335,6 +384,11 @@ if ($edit_id) {
             <?php if ($edit_id): ?>
                 var editModal = new bootstrap.Modal(document.getElementById('editModalForm'));
                 editModal.show();
+            <?php endif; ?>
+
+            <?php if ($confirm_fire_id && $confirm_fire_employee): ?>
+                var fireModal = new bootstrap.Modal(document.getElementById('confirmFireModalForm'));
+                fireModal.show();
             <?php endif; ?>
         });
     </script>
