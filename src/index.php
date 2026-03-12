@@ -1,5 +1,4 @@
 <?php
-
 include "config.php";
 
 // Обработка параметров из URL
@@ -8,45 +7,63 @@ $edit_id = isset($_GET['edit_id']) ? (int) $_GET['edit_id'] : null;
 $confirm_fire_id = isset($_GET['confirm_fire_id']) ? (int) $_GET['confirm_fire_id'] : null;
 $fire_id = isset($_GET['fire_id']) ? (int) $_GET['fire_id'] : null;
 
-//Увольнение
+// Фильтры
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$department_filter = isset($_GET['department']) ? trim($_GET['department']) : '';
+$position_filter = isset($_GET['position']) ? trim($_GET['position']) : '';
+
+// Увольнение
 if ($fire_id) {
     mysqli_query($conn, "UPDATE employees SET fired = 1 WHERE id = $fire_id");
     header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
     exit;
 }
 
-//Просмотр
+// Получаем уникальные значения для выпадающих списков
+$departments = mysqli_query($conn, "SELECT DISTINCT department FROM employees WHERE department IS NOT NULL AND department != '' ORDER BY department");
+$positions = mysqli_query($conn, "SELECT DISTINCT position FROM employees WHERE position IS NOT NULL AND position != '' ORDER BY position");
+
+// Построение SQL запроса с фильтрами
+$sql = "SELECT * FROM employees WHERE 1=1";
+
+if (!empty($search)) {
+    $search_escaped = mysqli_real_escape_string($conn, $search);
+    $sql .= " AND full_name LIKE '%$search_escaped%'";
+}
+
+if (!empty($department_filter)) {
+    $department_escaped = mysqli_real_escape_string($conn, $department_filter);
+    $sql .= " AND department = '$department_escaped'";
+}
+
+if (!empty($position_filter)) {
+    $position_escaped = mysqli_real_escape_string($conn, $position_filter);
+    $sql .= " AND position = '$position_escaped'";
+}
+
+$sql .= " ORDER BY id DESC";
+$all_employees = mysqli_query($conn, $sql);
+
+// Просмотр
 $view_employee = null;
 if ($view_id) {
     $view_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $view_id");
     $view_employee = mysqli_fetch_assoc($view_result);
 }
 
-//Редактирование
+// Редактирование
 $edit_employee = null;
 if ($edit_id) {
     $edit_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $edit_id");
     $edit_employee = mysqli_fetch_assoc($edit_result);
 }
 
-//Подтверждение увольнения
+// Подтверждение увольнения
 $confirm_fire_employee = null;
 if ($confirm_fire_id) {
     $fire_result = mysqli_query($conn, "SELECT * FROM employees WHERE id = $confirm_fire_id");
     $confirm_fire_employee = mysqli_fetch_assoc($fire_result);
 }
-
-//Поиск
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-$sql = "SELECT * FROM employees";
-if (!empty($search)) {
-    $search_escaped = mysqli_real_escape_string($conn, $search);
-    $sql .= " WHERE full_name LIKE '$search_escaped%' OR full_name LIKE '% $search_escaped%'";
-}
-$sql .= " ORDER BY id DESC";
-
-$all_employees = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
@@ -80,34 +97,90 @@ $all_employees = mysqli_query($conn, $sql);
         <section class="p-3">
             <div class="row">
                 <div class="col-12">
-
-                    <!-- Поисковая строка -->
+                    <!-- Фильтры -->
                     <div class="row mb-4">
-                        <div class="col-md-8 mx-auto">
-                            <form method="GET" action="" class="d-flex">
-                                <input type="text" name="search" class="form-control form-control-lg me-2"
-                                    placeholder="Поиск сотрудника по ФИО..." value="<?= htmlspecialchars($search) ?>">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-search"></i> Найти
-                                </button>
-                                <?php if (!empty($search)): ?>
-                                    <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn btn-secondary btn-lg
-                                    ms-2">
-                                        <i class="bi bi-x-circle"></i> Сбросить
-                                    </a>
-                                <?php endif; ?>
-                            </form>
+                        <div class="col-md-12">
+                            <div class="card shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="bi bi-funnel"></i> Фильтры</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form method="GET" action="" class="row g-3">
+                                        <!-- Поиск по ФИО -->
+                                        <div class="col-md-4">
+                                            <label class="form-label">Поиск по ФИО</label>
+                                            <input type="text" name="search" class="form-control"
+                                                placeholder="Введите ФИО..." value="<?= htmlspecialchars($search) ?>">
+                                        </div>
+
+                                        <!-- Фильтр по отделу -->
+                                        <div class="col-md-3">
+                                            <label class="form-label">Отдел</label>
+                                            <select name="department" class="form-select">
+                                                <option value="">Все отделы</option>
+                                                <?php while ($dept = mysqli_fetch_assoc($departments)): ?>
+                                                    <option value="<?= htmlspecialchars($dept['department']) ?>"
+                                                        <?= $department_filter == $dept['department'] ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($dept['department']) ?>
+                                                    </option>
+                                                <?php endwhile; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- Фильтр по должности -->
+                                        <div class="col-md-3">
+                                            <label class="form-label">Должность</label>
+                                            <select name="position" class="form-select">
+                                                <option value="">Все должности</option>
+                                                <?php while ($pos = mysqli_fetch_assoc($positions)): ?>
+                                                    <option value="<?= htmlspecialchars($pos['position']) ?>"
+                                                        <?= $position_filter == $pos['position'] ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($pos['position']) ?>
+                                                    </option>
+                                                <?php endwhile; ?>
+                                            </select>
+                                        </div>
+
+                                        <!-- Кнопки -->
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            <div class="d-grid gap-2 w-100">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="bi bi-search"></i> Применить
+                                                </button>
+                                                <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn
+                                                    btn-outline-secondary">
+                                                    <i class="bi bi-eraser"></i> Сбросить
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Результат поиска -->
-                    <?php if (!empty($search)): ?>
+                    <!-- Информация о фильтрах -->
+                    <?php if (!empty($search) || !empty($department_filter) || !empty($position_filter)): ?>
                         <div class="row mb-3">
                             <div class="col-12">
                                 <div class="alert alert-info">
-                                    Результаты поиска для: <strong>
-                                        <?= htmlspecialchars($search) ?>
-                                    </strong>
+                                    <i class="bi bi-info-circle"></i>
+                                    Применены фильтры:
+                                    <?php if (!empty($search)): ?>
+                                        <span class="badge bg-primary">Поиск:
+                                            <?= htmlspecialchars($search) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($department_filter)): ?>
+                                        <span class="badge bg-success">Отдел:
+                                            <?= htmlspecialchars($department_filter) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($position_filter)): ?>
+                                        <span class="badge bg-warning text-dark">Должность:
+                                            <?= htmlspecialchars($position_filter) ?>
+                                        </span>
+                                    <?php endif; ?>
                                     (найдено:
                                     <?= mysqli_num_rows($all_employees) ?>)
                                 </div>
@@ -148,23 +221,35 @@ $all_employees = mysqli_query($conn, $sql);
                                     <td><?= $employee["salary"] ?></td>
                                     <td><?= $employee["hire_date"] ?></td>
                                     <td>
+
+                                        <?php
+                                        // Параметры фильтров для сохранения в ссылках
+                                        $filter_params = '';
+                                        if (!empty($search))
+                                            $filter_params .= '&search=' . urlencode($search);
+                                        if (!empty($department_filter))
+                                            $filter_params .= '&department=' . urlencode($department_filter);
+                                        if (!empty($position_filter))
+                                            $filter_params .= '&position=' . urlencode($position_filter);
+                                        ?>
+
+
                                         <?php if ($employee["fired"] == 1): ?>
                                             <button class="btn btn-secondary" disabled>
                                                 <i class="bi bi-person-x"></i> Уволен
                                             </button>
                                         <?php else: ?>
-                                            <a href="?view_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                            <a href="?view_id=<?= $employee['id'] ?><?= $filter_params ?>"
                                                 class="btn btn-success view-btn">
                                                 <i class="bi bi-eye"></i>
                                             </a>
 
-                                            <!-- Аналогично для других кнопок -->
-                                            <a href="?edit_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                            <a href="?edit_id=<?= $employee['id'] ?><?= $filter_params ?>"
                                                 class="btn btn-primary edit-btn">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
 
-                                            <a href="?confirm_fire_id=<?= $employee['id'] ?>&search=<?= urlencode($search) ?>"
+                                            <a href="?confirm_fire_id=<?= $employee['id'] ?><?= $filter_params ?>"
                                                 class="btn btn-warning fire-btn">
                                                 <i class="bi bi-person-x"></i> Уволить
                                             </a>
@@ -286,7 +371,7 @@ $all_employees = mysqli_query($conn, $sql);
                                 </div>
                                 <div>
                                     <label for="birthdate">Дата рождения:</label>
-                                    <input type="date" name="birthdate" required>
+                                    <input type="date" name="birthdate" required min="1900-01-01" max="2009-12-31">
                                 </div>
                                 <div>
                                     <label for="passport">Серия/номер паспорта:</label>
@@ -316,7 +401,7 @@ $all_employees = mysqli_query($conn, $sql);
                                 </div>
                                 <div>
                                     <label for="salary">Размер зарплаты:</label>
-                                    <input type="number" name="salary" required>
+                                    <input type="number" name="salary" required min="1000" step="0.01">
                                 </div>
                                 <div>
                                     <label for="hiredate">Дата принятия на работу:</label>
@@ -357,17 +442,19 @@ $all_employees = mysqli_query($conn, $sql);
                                 <div>
                                     <label>Дата рождения:</label>
                                     <input type="date" name="birthdate" class="form-control"
-                                        value="<?= $edit_employee['birth_date'] ?? '' ?>" required>
+                                        value="<?= $edit_employee['birth_date'] ?? '' ?>" required min="1900-01-01" max="2009-12-31">
                                 </div>
                                 <div>
                                     <label>Серия/номер паспорта:</label>
                                     <input type="text" name="passport" class="form-control"
-                                        value="<?= htmlspecialchars($edit_employee['passport'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($edit_employee['passport'] ?? '') ?>" required minlength="10"
+                                        maxlength="10">
                                 </div>
                                 <div>
                                     <label>Номер телефона:</label>
                                     <input type="text" name="phonenumber" class="form-control"
-                                        value="<?= htmlspecialchars($edit_employee['phone_number'] ?? '') ?>" required>
+                                        value="<?= htmlspecialchars($edit_employee['phone_number'] ?? '') ?>" required minlength="11"
+                                        maxlength="11">>
                                 </div>
                                 <div>
                                     <label>Email:</label>
@@ -392,7 +479,7 @@ $all_employees = mysqli_query($conn, $sql);
                                 <div>
                                     <label>Размер зарплаты:</label>
                                     <input type="number" name="salary" class="form-control"
-                                        value="<?= $edit_employee['salary'] ?? '' ?>" required>
+                                        value="<?= $edit_employee['salary'] ?? '' ?>" required min="1000" step="0.01">
                                 </div>
                                 <div>
                                     <label>Дата принятия:</label>
@@ -463,6 +550,7 @@ $all_employees = mysqli_query($conn, $sql);
 
             document.querySelector('input[name="search"]')?.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     this.form.submit();
                 }
             });
