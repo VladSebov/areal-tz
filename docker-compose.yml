@@ -8,8 +8,10 @@ services:
 
   mysql:
     image: mysql
+    restart: always
     volumes:
-      - ./database:/var/lib/mysql
+      - ./database/data:/var/lib/mysql
+      - ./database/scripts:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: arealtz_database
