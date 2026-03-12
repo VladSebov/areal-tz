@@ -53,26 +53,26 @@ $query = mysqli_query($conn, "Select * from employees");
                         </tr>
 
                         <?php
-                        while ($employee = mysqli_fetch_assoc($query)) :?>
+                        while ($employee = mysqli_fetch_assoc($query)): ?>
 
-                        <tr>
-                            <td><?= $employee["id"] ?></td>
-                            <td><?= $employee["full_name"] ?></td>
-                            <td><?= $employee["birth_date"] ?></td>
-                            <td><?= $employee["passport"] ?></td>
-                            <td><?= $employee["phone_number"] ?></td>
-                            <td><?= $employee["email"] ?></td>
-                            <td><?= $employee["address"] ?></td>
-                            <td><?= $employee["department"] ?></td>
-                            <td><?= $employee["position"] ?></td>
-                            <td><?= $employee["salary"] ?></td>
-                            <td><?= $employee["hire_date"] ?></td>
-                            <td>
-                                <button class="btn btn-success"><i class="bi bi-eye"></i></button>
-                                <button class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><?= $employee["id"] ?></td>
+                                <td><?= $employee["full_name"] ?></td>
+                                <td><?= $employee["birth_date"] ?></td>
+                                <td><?= $employee["passport"] ?></td>
+                                <td><?= $employee["phone_number"] ?></td>
+                                <td><?= $employee["email"] ?></td>
+                                <td><?= $employee["address"] ?></td>
+                                <td><?= $employee["department"] ?></td>
+                                <td><?= $employee["position"] ?></td>
+                                <td><?= $employee["salary"] ?></td>
+                                <td><?= $employee["hire_date"] ?></td>
+                                <td>
+                                    <button class="btn btn-success"><i class="bi bi-eye"></i></button>
+                                    <button class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
 
                         <?php endwhile; ?>
                     </table>
@@ -94,55 +94,58 @@ $query = mysqli_query($conn, "Select * from employees");
                         <h4 class="modal-title">Добавление сотрудника</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
-                    <div class="modal-body">
-                        <form action="" id="employeeForm">
+                    <form method="POST" action="includes/action.php" id="employeeForm">
+                        <div class="modal-body">
+
                             <div class="inputField">
                                 <div>
                                     <label for="fullname">ФИО:</label>
-                                    <input type="text" name="" id="fullname">
+                                    <input type="text" name="fullname">
                                 </div>
                                 <div>
                                     <label for="birthdate">Дата рождения:</label>
-                                    <input type="date" name="" id="birthdate">
+                                    <input type="date" name="birthdate">
                                 </div>
                                 <div>
                                     <label for="passport">Серия/номер паспорта:</label>
-                                    <input type="text" name="" id="passport">
+                                    <input type="text" name="passport">
                                 </div>
                                 <div>
                                     <label for="phonenumber">Номер телефона:</label>
-                                    <input type="text" name="" id="phonenumber">
+                                    <input type="text" name="phonenumber">
                                 </div>
                                 <div>
                                     <label for="email">Email:</label>
-                                    <input type="email" name="" id="email">
+                                    <input type="email" name="email">
                                 </div>
                                 <div>
                                     <label for="address">Адрес:</label>
-                                    <input type="text" name="" id="address">
+                                    <input type="text" name="address">
                                 </div>
                                 <div>
                                     <label for="department">Отдел:</label>
-                                    <input type="text" name="" id="department">
+                                    <input type="text" name="department">
                                 </div>
                                 <div>
                                     <label for="position">Должность:</label>
-                                    <input type="text" name="" id="position">
+                                    <input type="text" name="position">
                                 </div>
                                 <div>
                                     <label for="salary">Размер зарплаты:</label>
-                                    <input type="number" name="" id="salary">
+                                    <input type="number" name="salary">
                                 </div>
                                 <div>
                                     <label for="hiredate">Дата принятия на работу:</label>
-                                    <input type="text" name="" id="hiredate">
+                                    <input type="date" name="hiredate">
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" form="myForm" class="btn btn-primary submit">Добавить</button>
-                    </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button name="addEmployee" type="submit" form="employeeForm"
+                                class="btn btn-primary submit">Добавить</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
