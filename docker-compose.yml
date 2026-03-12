@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    volumes:
+    - ./src:/var/www/html
+    ports:
+    - "${APP_PORT}:${APP_PORT}"
+
+  mysql:
+    image: mysql
+    volumes:
+      - ./database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: arealtz_database
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
