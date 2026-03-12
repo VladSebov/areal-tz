@@ -442,19 +442,20 @@ if ($confirm_fire_id) {
                                 <div>
                                     <label>Дата рождения:</label>
                                     <input type="date" name="birthdate" class="form-control"
-                                        value="<?= $edit_employee['birth_date'] ?? '' ?>" required min="1900-01-01" max="2009-12-31">
+                                        value="<?= $edit_employee['birth_date'] ?? '' ?>" required min="1900-01-01"
+                                        max="2009-12-31">
                                 </div>
                                 <div>
                                     <label>Серия/номер паспорта:</label>
                                     <input type="text" name="passport" class="form-control"
-                                        value="<?= htmlspecialchars($edit_employee['passport'] ?? '') ?>" required minlength="10"
-                                        maxlength="10">
+                                        value="<?= htmlspecialchars($edit_employee['passport'] ?? '') ?>" required
+                                        minlength="10" maxlength="10">
                                 </div>
                                 <div>
                                     <label>Номер телефона:</label>
                                     <input type="text" name="phonenumber" class="form-control"
-                                        value="<?= htmlspecialchars($edit_employee['phone_number'] ?? '') ?>" required minlength="11"
-                                        maxlength="11">>
+                                        value="<?= htmlspecialchars($edit_employee['phone_number'] ?? '') ?>" required
+                                        minlength="11" maxlength="11">>
                                 </div>
                                 <div>
                                     <label>Email:</label>

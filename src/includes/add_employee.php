@@ -25,4 +25,4 @@ if (isset($_POST['addEmployee'])) {
     header("Location: ../index.php");
     exit();
 }
-
+?>
