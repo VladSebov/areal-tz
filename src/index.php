@@ -5,7 +5,7 @@ $all_employees = mysqli_query($conn, "Select * from employees");
 
 // Обработка параметров из URL
 $view_id = isset($_GET['view_id']) ? (int) $_GET['view_id'] : null;
-$edit_id = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
+$edit_id = isset($_GET['edit_id']) ? (int) $_GET['edit_id'] : null;
 
 $view_employee = null;
 if ($view_id) {
@@ -172,7 +172,7 @@ if ($edit_id) {
                 </div>
             </div>
         </div>
-        <!-- Add Modal Form -->
+        <!-- View Modal Form -->
 
         <!-- Add Modal Form -->
         <div class="modal fade" id="addModalForm">
@@ -182,7 +182,7 @@ if ($edit_id) {
                         <h4 class="modal-title">Добавление сотрудника</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                     </div>
-                    <form method="POST" action="includes/action.php" id="employeeForm">
+                    <form method="POST" action="includes/add_employee.php" id="employeeForm">
                         <div class="modal-body">
 
                             <div class="inputField">
@@ -196,11 +196,13 @@ if ($edit_id) {
                                 </div>
                                 <div>
                                     <label for="passport">Серия/номер паспорта:</label>
-                                    <input type="text" name="passport" id="passport" required minlength="10" maxlength="10">
+                                    <input type="text" name="passport" id="passport" required minlength="10"
+                                        maxlength="10">
                                 </div>
                                 <div>
                                     <label for="phonenumber">Номер телефона:</label>
-                                    <input type="text" name="phonenumber" id="phone" required minlength="11" maxlength="11">
+                                    <input type="text" name="phonenumber" id="phone" required minlength="11"
+                                        maxlength="11">
                                 </div>
                                 <div>
                                     <label for="email">Email:</label>
@@ -239,6 +241,81 @@ if ($edit_id) {
 
         </div>
         <!-- Add Modal Form -->
+
+        <!-- Edit Modal Form -->
+        <div class="modal fade <?= $edit_id ? 'show' : '' ?>" id="editModalForm" <?= $edit_id ? 'style="display:block"' : '' ?>>
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Редактирование сотрудника</h4>
+                        <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn-close"
+                            aria-label="Закрыть"></a>
+                    </div>
+                    <form action="includes/update_employee.php" method="POST">
+                        <input type="hidden" name="id" value="<?= $edit_employee['id'] ?? '' ?>">
+                        <div class="modal-body">
+                            <div class="inputField">
+                                <div>
+                                    <label>ФИО:</label>
+                                    <input type="text" name="fullname" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['full_name'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Дата рождения:</label>
+                                    <input type="date" name="birthdate" class="form-control"
+                                        value="<?= $edit_employee['birth_date'] ?? '' ?>" required>
+                                </div>
+                                <div>
+                                    <label>Серия/номер паспорта:</label>
+                                    <input type="text" name="passport" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['passport'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Номер телефона:</label>
+                                    <input type="text" name="phonenumber" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['phone_number'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Email:</label>
+                                    <input type="email" name="email" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['email'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Адрес:</label>
+                                    <input type="text" name="address" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['address'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Отдел:</label>
+                                    <input type="text" name="department" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['department'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Должность:</label>
+                                    <input type="text" name="position" class="form-control"
+                                        value="<?= htmlspecialchars($edit_employee['position'] ?? '') ?>" required>
+                                </div>
+                                <div>
+                                    <label>Размер зарплаты:</label>
+                                    <input type="number" name="salary" class="form-control"
+                                        value="<?= $edit_employee['salary'] ?? '' ?>" required>
+                                </div>
+                                <div>
+                                    <label>Дата принятия:</label>
+                                    <input type="date" name="hiredate" class="form-control"
+                                        value="<?= $edit_employee['hire_date'] ?? '' ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="<?= strtok($_SERVER["REQUEST_URI"], '?') ?>" class="btn btn-secondary">Отмена</a>
+                            <button type="submit" name="updateEmployee" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Edit Modal Form -->
 
     </main>
 
