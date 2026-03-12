@@ -15,10 +15,3 @@ CREATE TABLE employees (
     hire_date DATE NOT NULL,
     fired BOOLEAN NOT NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-UPDATE employees SET 
-    full_name = CONVERT(CAST(CONVERT(full_name USING latin1) AS BINARY) USING utf8mb4),
-    address = CONVERT(CAST(CONVERT(address USING latin1) AS BINARY) USING utf8mb4),
-    department = CONVERT(CAST(CONVERT(department USING latin1) AS BINARY) USING utf8mb4),
-    position = CONVERT(CAST(CONVERT(position USING latin1) AS BINARY) USING utf8mb4)
-WHERE 1=1;
