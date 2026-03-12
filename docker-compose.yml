@@ -1,6 +1,10 @@
 services:
   web:
     build: .
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PORT=${MYSQL_PORT}
     volumes:
     - ./src:/var/www/html
     ports:

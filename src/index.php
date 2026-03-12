@@ -1,3 +1,10 @@
+<?php
+
+include "config.php";
+$query = mysqli_query($conn, "Select * from employees");
+
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -45,24 +52,29 @@
                             <th>Действия</th>
                         </tr>
 
+                        <?php
+                        while ($employee = mysqli_fetch_assoc($query)) :?>
+
                         <tr>
-                            <td></td>
-                            <td>Иванов Иван Иванович</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td><?= $employee["id"] ?></td>
+                            <td><?= $employee["full_name"] ?></td>
+                            <td><?= $employee["birth_date"] ?></td>
+                            <td><?= $employee["passport"] ?></td>
+                            <td><?= $employee["phone_number"] ?></td>
+                            <td><?= $employee["email"] ?></td>
+                            <td><?= $employee["address"] ?></td>
+                            <td><?= $employee["department"] ?></td>
+                            <td><?= $employee["position"] ?></td>
+                            <td><?= $employee["salary"] ?></td>
+                            <td><?= $employee["hire_date"] ?></td>
                             <td>
                                 <button class="btn btn-success"><i class="bi bi-eye"></i></button>
                                 <button class="btn btn-primary"><i class="bi bi-pencil-square"></i></button>
                                 <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr>
+
+                        <?php endwhile; ?>
                     </table>
                 </div>
             </div>
