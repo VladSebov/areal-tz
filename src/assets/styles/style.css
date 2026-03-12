@@ -2,12 +2,14 @@ table tr td {
     vertical-align: middle;
 }
 
-td button {
-    margin: 5;
+td button,
+td a {
+    margin: 5px;
 }
 
-td button i {
-    font-family: 20px;
+td button i,
+td a i {
+    font-size: 20px;
 }
 
 header h1 {
@@ -20,48 +22,67 @@ header h1 {
 }
 
 .modal-body {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 0;
+    padding: 20px;
 }
 
-.modal-body form .inputField {
-    flex-basis: 75%;
-}
-
-form .inputField>div {
+.inputField {
     width: 100%;
+}
+
+.inputField > div {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-form .inputField>div label {
-    font-size: 20px;
+.inputField > div label {
+    flex: 0 0 200px;
+    font-size: 18px;
     font-weight: 500;
 }
 
 form .inputField > div label::after {
     content: "*";
     color: red;
+    margin-left: 4px;
 }
 
-form .inputField > div input {
-    width: 75%;
+.inputField > div input {
+    flex: 1;
     padding: 10px;
     border: none;
     outline: none;
     border-bottom: 1px solid lightblue;
+    background: transparent;
+    font-size: 16px;
 }
 
-
-.modal-footer .submit{
-    font-size: 18px;
-}
-
-
-#readData form .inputField > div input{
+#viewModalForm .inputField > div input {
     color: #000;
     font-size: 18px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.modal-footer .submit {
+    font-size: 18px;
+}
+
+@media (max-width: 768px) {
+    .inputField > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .inputField > div label {
+        flex: none;
+        width: 100%;
+    }
+    
+    .inputField > div input {
+        width: 100%;
+        flex: none;
+    }
 }
